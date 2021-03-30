@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.6.4'
+        classpath 'com.android.tools.build:gradle:4.0.2'
+
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+    }
+
+    allprojects {
+        repositories {
+            jcenter()
+            google()
+            mavenCentral()
+        }
+    }
+
+}
+
+task assemble {}
+
+ext {
+    sdkVersion = 25
+    buildToolsVersion = '25.0.2'
+}

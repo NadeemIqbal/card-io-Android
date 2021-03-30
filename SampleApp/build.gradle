@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.0-beta04'
+    }
+}
+
+repositories {
+    jcenter()
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "25.0.3"
+
+    ndkVersion "20.0.5594570"
+
+    defaultConfig {
+        applicationId "io.card.development"
+        minSdkVersion 18
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                output.outputFile = new File(outputFile.parent, "card.io-sample-app-${variant.name}.apk")
+            }
+        }
+    }
+}
+
+dependencies {
+//    if (parent != null) {
+        compile project(':card.io')
+//    } else {
+//        compile 'io.card:android-sdk:5.5.1'
+//    }
+
+//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+
+    androidTestCompile "com.android.support.test.espresso:espresso-core:2.2.2"
+    androidTestCompile "com.github.lkorth:device-automator:01d85912ec"
+}

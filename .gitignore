@@ -1,0 +1,30 @@
+# Gradle files
+.gradle
+build
+.externalNativeBuild
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# IntelliJ project files
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Misc
+.DS_Store
+
+# Custom card.io files
+gdb.setup
+gdbserver
+.cproject
+opencv/build-*
+opencv/OpenCV-*
+/out/
+
+*.pyc
+downstream_repos/
+
+secring.gpg
+
