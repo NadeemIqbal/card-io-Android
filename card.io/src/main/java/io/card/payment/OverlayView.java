@@ -4,6 +4,7 @@ package io.card.payment;
  * See the file "LICENSE.md" for the full license governing this code.
  */
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -64,30 +65,30 @@ import io.card.payment.i18n.StringKey;
  * independent of screen scale.
  * <p/>
  */
-class OverlayView extends View {
-    private static final String TAG = OverlayView.class.getSimpleName();
+public class OverlayView extends View {
+    private static String TAG = OverlayView.class.getSimpleName();
 
-    private static final float GUIDE_FONT_SIZE = 26.0f;
-    private static final float GUIDE_LINE_PADDING = 8.0f;
-    private static final float GUIDE_LINE_HEIGHT = GUIDE_FONT_SIZE + GUIDE_LINE_PADDING;
-    private static final float CARD_NUMBER_MARKUP_FONT_SIZE = GUIDE_FONT_SIZE + 2;
+    private static float GUIDE_FONT_SIZE = 26.0f;
+    private static float GUIDE_LINE_PADDING = 8.0f;
+    private static float GUIDE_LINE_HEIGHT = GUIDE_FONT_SIZE + GUIDE_LINE_PADDING;
+    private static float CARD_NUMBER_MARKUP_FONT_SIZE = GUIDE_FONT_SIZE + 2;
 
-    private static final Orientation[] GRADIENT_ORIENTATIONS = { Orientation.TOP_BOTTOM,
-            Orientation.LEFT_RIGHT, Orientation.BOTTOM_TOP, Orientation.RIGHT_LEFT };
+    private static Orientation[] GRADIENT_ORIENTATIONS = {Orientation.TOP_BOTTOM,
+            Orientation.LEFT_RIGHT, Orientation.BOTTOM_TOP, Orientation.RIGHT_LEFT};
 
-    private static final int GUIDE_STROKE_WIDTH = 17;
+    private static int GUIDE_STROKE_WIDTH = 17;
 
-    private static final float CORNER_RADIUS_SIZE = 1 / 15.0f;
+    private static float CORNER_RADIUS_SIZE = 1 / 15.0f;
 
-    private static final int TORCH_WIDTH = 70;
-    private static final int TORCH_HEIGHT = 50;
+    private static int TORCH_WIDTH = 70;
+    private static int TORCH_HEIGHT = 50;
 
-    private static final int LOGO_MAX_WIDTH = 100;
-    private static final int LOGO_MAX_HEIGHT = TORCH_HEIGHT;
+    private static int LOGO_MAX_WIDTH = 100;
+    private static int LOGO_MAX_HEIGHT = TORCH_HEIGHT;
 
-    private static final int BUTTON_TOUCH_TOLERANCE = 20;
+    private static int BUTTON_TOUCH_TOLERANCE = 20;
 
-    private final WeakReference<CardIOActivity> mScanActivityRef;
+    private WeakReference<CardIOActivity> mScanActivityRef;
     private DetectionInfo mDInfo;
     private Bitmap mBitmap;
     GradientDrawable mScanLineDrawable;
@@ -102,19 +103,27 @@ class OverlayView extends View {
 
     // Keep paint objects around for high frequency methods to avoid re-allocating them.
     private GradientDrawable mGradientDrawable;
-    private final Paint mGuidePaint;
-    private final Paint mLockedBackgroundPaint;
+    private Paint mGuidePaint;
+    private Paint mLockedBackgroundPaint;
     private Path mLockedBackgroundPath;
     private Rect mCameraPreviewRect;
-    private final Torch mTorch;
-    private final Logo mLogo;
+    private Torch mTorch;
+    private Logo mLogo;
     private Rect mTorchRect, mLogoRect;
-    private final boolean mShowTorch;
+    private boolean mShowTorch;
     private int mRotationFlip;
     private float mScale = 1;
 
-    public OverlayView(CardIOActivity captureActivity, AttributeSet attributeSet, boolean showTorch) {
+    public OverlayView(Context captureActivity, AttributeSet attributeSet) {
         super(captureActivity, attributeSet);
+
+    }
+    public OverlayView(Context captureActivity) {
+        super(captureActivity, null);
+
+    }
+
+    public void init(CardIOActivity captureActivity, boolean showTorch) {
 
         mShowTorch = showTorch;
         mScanActivityRef = new WeakReference<CardIOActivity>(captureActivity);
@@ -189,7 +198,7 @@ class OverlayView extends View {
             mLogoRect = Util.rectGivenCenter(logoPoint, (int) (LOGO_MAX_WIDTH * mScale),
                     (int) (LOGO_MAX_HEIGHT * mScale));
 
-            int[] gradientColors = { Color.WHITE, Color.BLACK };
+            int[] gradientColors = {Color.WHITE, Color.BLACK};
             Orientation gradientOrientation = GRADIENT_ORIENTATIONS[(mRotation / 90) % 4];
             mGradientDrawable = new GradientDrawable(gradientOrientation, gradientColors);
             mGradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
@@ -461,7 +470,7 @@ class OverlayView extends View {
         paint.setTextSize(CARD_NUMBER_MARKUP_FONT_SIZE * mScale);
 
         int len = mDetectedCard.cardNumber.length();
-        float sf = mBitmap.getWidth() / (float)CardScanner.CREDIT_CARD_TARGET_WIDTH;
+        float sf = mBitmap.getWidth() / (float) CardScanner.CREDIT_CARD_TARGET_WIDTH;
         int yOffset = (int) ((mDetectedCard.yoff * sf - 6));
         for (int i = 0; i < len; i++) {
             int xOffset = (int) (mDetectedCard.xoff[i] * sf);

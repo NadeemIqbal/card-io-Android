@@ -39,36 +39,36 @@ class Logo {
 
         mUseCardIOLogo = useCardIOLogo;
         if (useCardIOLogo) {
-            mLogo = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.cio_card_io_logo);
+//            mLogo = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.cio_card_io_logo);
         } else {
-            mLogo = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.cio_paypal_logo);
+//            mLogo = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.cio_paypal_logo);
         }
     }
 
     public void draw(Canvas canvas, float maxWidth, float maxHeight) {
-        if (mLogo == null) {
-            loadLogo(false);
-        }
-
-        canvas.save();
-
-        float drawWidth, drawHeight;
-        float targetAspectRatio = (float) mLogo.getHeight() / mLogo.getWidth();
-        if ((maxHeight / maxWidth) < targetAspectRatio) {
-            drawHeight = maxHeight;
-            drawWidth = maxHeight / targetAspectRatio;
-        } else {
-            drawWidth = maxWidth;
-            drawHeight = maxWidth * targetAspectRatio;
-        }
-
-        float halfWidth = drawWidth / 2;
-        float halfHeight = drawHeight / 2;
-
-        canvas.drawBitmap(mLogo, new Rect(0, 0, mLogo.getWidth(), mLogo.getHeight()), new RectF(
-                -halfWidth, -halfHeight, halfWidth, halfHeight), mPaint);
-
-        canvas.restore();
+//        if (mLogo == null) {
+//            loadLogo(false);
+//        }
+//
+//        canvas.save();
+//
+//        float drawWidth, drawHeight;
+//        float targetAspectRatio = (float) mLogo.getHeight() / mLogo.getWidth();
+//        if ((maxHeight / maxWidth) < targetAspectRatio) {
+//            drawHeight = maxHeight;
+//            drawWidth = maxHeight / targetAspectRatio;
+//        } else {
+//            drawWidth = maxWidth;
+//            drawHeight = maxWidth * targetAspectRatio;
+//        }
+//
+//        float halfWidth = drawWidth / 2;
+//        float halfHeight = drawHeight / 2;
+//
+//        canvas.drawBitmap(mLogo, new Rect(0, 0, mLogo.getWidth(), mLogo.getHeight()), new RectF(
+//                -halfWidth, -halfHeight, halfWidth, halfHeight), mPaint);
+//
+//        canvas.restore();
     }
 
 }

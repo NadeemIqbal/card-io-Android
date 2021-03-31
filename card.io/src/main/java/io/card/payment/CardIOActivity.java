@@ -35,6 +35,7 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -275,7 +276,7 @@ public final class CardIOActivity extends Activity {
 
     private static final float UIBAR_VERTICAL_MARGIN_DP = 15.0f;
 
-    private static final long[] VIBRATE_PATTERN = { 0, 70, 10, 40 };
+    private static final long[] VIBRATE_PATTERN = {0, 70, 10, 40};
 
     private static final int TOAST_OFFSET_Y = -75;
 
@@ -305,6 +306,8 @@ public final class CardIOActivity extends Activity {
 
     private boolean manualEntryFallbackOrForced = false;
 
+    private ImageView ivBack;
+
     /**
      * Static variable for the decorated card image. This is ugly, but works. Parceling and
      * unparceling card image data to pass to the next {@link android.app.Activity} does not work because the image
@@ -323,6 +326,16 @@ public final class CardIOActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_cardio);
+
+        ivBack = (ImageView) findViewById(R.id.back);
+
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setResultAndFinish(RESULT_ENTRY_CANCELED, null);
+            }
+        });
 
         final Intent clientData = this.getIntent();
 
@@ -357,7 +370,7 @@ public final class CardIOActivity extends Activity {
 
         if (clientData.getBooleanExtra(EXTRA_NO_CAMERA, false)) {
             manualEntryFallbackOrForced = true;
-        } else if (!CardScanner.processorSupported()){
+        } else if (!CardScanner.processorSupported()) {
             manualEntryFallbackOrForced = true;
         } else {
             try {
@@ -459,8 +472,8 @@ public final class CardIOActivity extends Activity {
                 Class<?> testScannerClass = Class.forName("io.card.payment.CardScannerTester");
                 Constructor<?> cons = testScannerClass.getConstructor(this.getClass(),
                         Integer.TYPE);
-                mCardScanner = (CardScanner) cons.newInstance(new Object[] { this,
-                        mFrameOrientation });
+                mCardScanner = (CardScanner) cons.newInstance(new Object[]{this,
+                        mFrameOrientation});
             } else {
                 mCardScanner = new CardScanner(this, mFrameOrientation);
             }
@@ -749,7 +762,7 @@ public final class CardIOActivity extends Activity {
         }
 
         mCardScanner.pauseScanning();
-        mUIBar.setVisibility(View.INVISIBLE);
+//        mUIBar.setVisibility(View.INVISIBLE);
 
         if (dInfo.predicted()) {
             mDetectedCard = dInfo.creditCard();
@@ -759,9 +772,9 @@ public final class CardIOActivity extends Activity {
         float sf;
         if (mFrameOrientation == ORIENTATION_PORTRAIT
                 || mFrameOrientation == ORIENTATION_PORTRAIT_UPSIDE_DOWN) {
-            sf = mGuideFrame.right / (float)CardScanner.CREDIT_CARD_TARGET_WIDTH * .95f;
+            sf = mGuideFrame.right / (float) CardScanner.CREDIT_CARD_TARGET_WIDTH * .95f;
         } else {
-            sf = mGuideFrame.right / (float)CardScanner.CREDIT_CARD_TARGET_WIDTH * 1.15f;
+            sf = mGuideFrame.right / (float) CardScanner.CREDIT_CARD_TARGET_WIDTH * 1.15f;
         }
 
         Matrix m = new Matrix();
@@ -848,7 +861,7 @@ public final class CardIOActivity extends Activity {
         assert mPreview != null;
         boolean success = mCardScanner.resumeScanning(mPreview.getSurfaceHolder());
         if (success) {
-            mUIBar.setVisibility(View.VISIBLE);
+//            mUIBar.setVisibility(View.VISIBLE);
         }
 
         return success;
@@ -894,23 +907,29 @@ public final class CardIOActivity extends Activity {
      */
     private void setPreviewLayout() {
 
-        // top level container
-        mMainLayout = new FrameLayout(this);
-        mMainLayout.setBackgroundColor(Color.BLACK);
-        mMainLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
+//        // top level container
+//        mMainLayout = new FrameLayout(this);
+//        mMainLayout.setBackgroundColor(Color.BLACK);
+//        mMainLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+//                LayoutParams.MATCH_PARENT));
+//
+//        FrameLayout previewFrame = new FrameLayout(this);
+//        previewFrame.setId(FRAME_ID);
 
-        FrameLayout previewFrame = new FrameLayout(this);
-        previewFrame.setId(FRAME_ID);
+//        mPreview = new Preview(this, null, mCardScanner.mPreviewWidth, mCardScanner.mPreviewHeight);
+        mPreview = (Preview) findViewById(R.id.preview);
+        mPreview.init(this, mCardScanner.mPreviewWidth, mCardScanner.mPreviewHeight);
 
-        mPreview = new Preview(this, null, mCardScanner.mPreviewWidth, mCardScanner.mPreviewHeight);
-        mPreview.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT, Gravity.TOP));
-        previewFrame.addView(mPreview);
+//        mPreview.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+//                LayoutParams.MATCH_PARENT, Gravity.TOP));
+//        previewFrame.addView(mPreview);
 
-        mOverlay = new OverlayView(this, null, Util.deviceSupportsTorch(this));
-        mOverlay.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
+//        mOverlay = new OverlayView(this, null, Util.deviceSupportsTorch(this));
+        mOverlay = (OverlayView) findViewById(R.id.overlayView);
+        mOverlay.init(this, Util.deviceSupportsTorch(this));
+//        mOverlay.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+//                LayoutParams.MATCH_PARENT));
+
         if (getIntent() != null) {
             boolean useCardIOLogo = getIntent().getBooleanExtra(EXTRA_USE_CARDIO_LOGO, false);
             mOverlay.setUseCardIOLogo(useCardIOLogo);
@@ -936,62 +955,62 @@ public final class CardIOActivity extends Activity {
 
         }
 
-        previewFrame.addView(mOverlay);
+//        previewFrame.addView(mOverlay);
 
-        RelativeLayout.LayoutParams previewParams = new RelativeLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        previewParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        previewParams.addRule(RelativeLayout.ABOVE, UIBAR_ID);
-        mMainLayout.addView(previewFrame, previewParams);
+//        RelativeLayout.LayoutParams previewParams = new RelativeLayout.LayoutParams(
+//                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//        previewParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+//        previewParams.addRule(RelativeLayout.ABOVE, UIBAR_ID);
+//        mMainLayout.addView(previewFrame, previewParams);
 
-        mUIBar = new RelativeLayout(this);
-        mUIBar.setGravity(Gravity.BOTTOM);
-        RelativeLayout.LayoutParams mUIBarParams = new RelativeLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        previewParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        mUIBar.setLayoutParams(mUIBarParams);
+//        mUIBar = new RelativeLayout(this);
+//        mUIBar.setGravity(Gravity.BOTTOM);
+//        RelativeLayout.LayoutParams mUIBarParams = new RelativeLayout.LayoutParams(
+//                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+//        previewParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//        mUIBar.setLayoutParams(mUIBarParams);
 
-        mUIBar.setId(UIBAR_ID);
+//        mUIBar.setId(UIBAR_ID);
 
-        mUIBar.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+//        mUIBar.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
 
         // Show the keyboard button
-        if (!suppressManualEntry) {
-            Button keyboardBtn = new Button(this);
-            keyboardBtn.setId(KEY_BTN_ID);
-            keyboardBtn.setText(LocalizedStrings.getString(StringKey.KEYBOARD));
-            keyboardBtn.setOnClickListener(new Button.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    nextActivity();
-                }
-            });
-            mUIBar.addView(keyboardBtn);
-            ViewUtil.styleAsButton(keyboardBtn, false, this, useApplicationTheme);
-            if(!useApplicationTheme){
-                keyboardBtn.setTextSize(Appearance.TEXT_SIZE_SMALL_BUTTON);
-            }
-            keyboardBtn.setMinimumHeight(ViewUtil.typedDimensionValueToPixelsInt(
-                    Appearance.SMALL_BUTTON_HEIGHT, this));
-            RelativeLayout.LayoutParams keyboardParams = (RelativeLayout.LayoutParams) keyboardBtn
-                    .getLayoutParams();
-            keyboardParams.width = LayoutParams.WRAP_CONTENT;
-            keyboardParams.height = LayoutParams.WRAP_CONTENT;
-            keyboardParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            ViewUtil.setPadding(keyboardBtn, Appearance.CONTAINER_MARGIN_HORIZONTAL, null,
-                    Appearance.CONTAINER_MARGIN_HORIZONTAL, null);
-            ViewUtil.setMargins(keyboardBtn, Appearance.BASE_SPACING, Appearance.BASE_SPACING,
-                    Appearance.BASE_SPACING, Appearance.BASE_SPACING);
-
-        }
-        // Device has a flash, show the flash button
-        RelativeLayout.LayoutParams uiParams = new RelativeLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        uiParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        final float scale = getResources().getDisplayMetrics().density;
-        int uiBarMarginPx = (int) (UIBAR_VERTICAL_MARGIN_DP * scale + 0.5f);
-        uiParams.setMargins(0, uiBarMarginPx, 0, uiBarMarginPx);
-        mMainLayout.addView(mUIBar, uiParams);
+//        if (!suppressManualEntry) {
+//            Button keyboardBtn = new Button(this);
+//            keyboardBtn.setId(KEY_BTN_ID);
+//            keyboardBtn.setText(LocalizedStrings.getString(StringKey.KEYBOARD));
+//            keyboardBtn.setOnClickListener(new Button.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    nextActivity();
+//                }
+//            });
+////            mUIBar.addView(keyboardBtn);
+////            ViewUtil.styleAsButton(keyboardBtn, false, this, useApplicationTheme);
+//            if (!useApplicationTheme) {
+//                keyboardBtn.setTextSize(Appearance.TEXT_SIZE_SMALL_BUTTON);
+//            }
+//            keyboardBtn.setMinimumHeight(ViewUtil.typedDimensionValueToPixelsInt(
+//                    Appearance.SMALL_BUTTON_HEIGHT, this));
+//            RelativeLayout.LayoutParams keyboardParams = (RelativeLayout.LayoutParams) keyboardBtn
+//                    .getLayoutParams();
+//            keyboardParams.width = LayoutParams.WRAP_CONTENT;
+//            keyboardParams.height = LayoutParams.WRAP_CONTENT;
+//            keyboardParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//            ViewUtil.setPadding(keyboardBtn, Appearance.CONTAINER_MARGIN_HORIZONTAL, null,
+//                    Appearance.CONTAINER_MARGIN_HORIZONTAL, null);
+//            ViewUtil.setMargins(keyboardBtn, Appearance.BASE_SPACING, Appearance.BASE_SPACING,
+//                    Appearance.BASE_SPACING, Appearance.BASE_SPACING);
+//
+//        }
+//        // Device has a flash, show the flash button
+//        RelativeLayout.LayoutParams uiParams = new RelativeLayout.LayoutParams(
+//                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+//        uiParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//        final float scale = getResources().getDisplayMetrics().density;
+//        int uiBarMarginPx = (int) (UIBAR_VERTICAL_MARGIN_DP * scale + 0.5f);
+//        uiParams.setMargins(0, uiBarMarginPx, 0, uiBarMarginPx);
+//        mMainLayout.addView(mUIBar, uiParams);
 
         if (getIntent() != null) {
             if (customOverlayLayout != null) {
@@ -1008,11 +1027,10 @@ public final class CardIOActivity extends Activity {
                 LayoutInflater inflater = this.getLayoutInflater();
 
                 inflater.inflate(resourceId, customOverlayLayout);
-                mMainLayout.addView(customOverlayLayout);
+//                mMainLayout.addView(customOverlayLayout);
             }
         }
 
-        this.setContentView(mMainLayout);
     }
 
     private void rotateCustomOverlay(float degrees) {
